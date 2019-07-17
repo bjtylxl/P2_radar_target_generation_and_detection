@@ -17,7 +17,7 @@ clc;
 % remains contant
  
 R = 110; % initial DISTANCE OF THE TARGET
-v = 30; % initial Velocity OF THE TARGET
+v = 20; % initial Velocity OF THE TARGET
 
 
 
@@ -112,7 +112,7 @@ signal_fft = abs(signal_fft);
 % Output of FFT is double sided signal, but we are interested in only one side of the spectrum.
 % Hence we throw out half of the samples.
 signal_fft = signal_fft(1:Nr/2);
-%disp(length(signal_fft));
+disp(length(signal_fft));
 
 %plotting the range
 figure ('Name','Range from FFT_1')
@@ -141,15 +141,15 @@ signal_fft2 = fft2(Mix,Nr,Nd);
 % Taking just one side of signal from Range dimension.
 signal_fft2 = signal_fft2(1:Nr/2,1:Nd);
 signal_fft2 = fftshift (signal_fft2);
-CFAR = abs(signal_fft2);
-CFAR = 10*log10(CFAR) ;
+RDM = abs(signal_fft2);
+RDM = 10*log10(RDM) ;
 
 %use the surf function to plot the output of 2DFFT and to show axis in both
 %dimensions
 doppler_axis = linspace(-100,100,Nd);
 range_axis = linspace(-200,200,Nr/2)*((Nr/2)/400);
-figure ('Name','Range and Velocity from  FFT2')
-surf(doppler_axis,range_axis,CFAR);
+figure ('Name','Range and speed from  FFT2')
+surf(doppler_axis,range_axis,RDM);
 
 
 %% CFAR implementation
@@ -197,17 +197,20 @@ noise_level = zeros(1,1);
 %it a value of 1, else equate it to 0.
 
 
-
-CFAR = CFAR/max(max(CFAR));
+   % Use RDM[x,y] as the matrix from the output of 2D FFT for implementing
+   % CFAR
+RDM = RDM/max(max(RDM));
 
 for i = Tr+Gr+1:(Nr/2)-(Gr+Tr)
     for j = Td+Gd+1:Nd-(Gd+Td)
-  
+        
+      
+        
         % Calculate noise SUM in the area around CUT
-        for m = i-(Tr+Gr) : i+(Tr+Gr)
-            for n = j-(Td+Gd) : j+(Td+Gd)
-                if (abs(i-m) > Gr || abs(j-n) > Gd)
-                    noise_level = noise_level + db2pow(CFAR(m,n));
+        for p = i-(Tr+Gr) : i+(Tr+Gr)
+            for q = j-(Td+Gd) : j+(Td+Gd)
+                if (abs(i-p) > Gr || abs(j-q) > Gd)
+                    noise_level = noise_level + db2pow(RDM(p,q));
                 end
             end
         end
@@ -215,16 +218,16 @@ for i = Tr+Gr+1:(Nr/2)-(Gr+Tr)
         % Calculate threshould from noise average then add the offset
         
         ntraincell = (2*(Td+Gd)+1)  * (2 * (Tr + Gr)+ 1) - ((2 * Gr + 1) * (2 * Gd +1));
-        threshold = pow2db(noise_level/ntraincell); 
+        threshold = pow2db(noise_level/ntraincell); % 
         threshold = threshold + offset;
    
-        %disp(threshold)
-        CUT = CFAR(i,j);
+        disp(threshold)
+        CUT = RDM(i,j);
         
         if (CUT < threshold)
-            CFAR(i,j) = 0;
+            RDM(i,j) = 0;
         else
-            CFAR(i,j) = 1;
+            RDM(i,j) = 1;
         end
 		
 		noise_level = zeros(1,1);
@@ -241,19 +244,24 @@ end
 
  
 for i = 1 : Nr/2
-    for j = 1:Nd       
-        if (CFAR(i,j) ~= 0 && CFAR(i,j) ~= 1 )
-             CFAR(i,j) = 0;
+    for j = 1:Nd
+        
+        if (RDM(i,j) ~= 0 && RDM(i,j) ~= 1 )
+             RDM(i,j) = 0;
         end
     end
 end
 
 
+
+%RDM(union(1:(Tr+Gr),end-(Tr+Gr-1):end),:) = 0;  % Rows
+%RDM(:,union(1:(Td+Gd),end-(Td+Gd-1):end)) = 0;  % Columns 
+
 % *%TODO* :
 %display the CFAR output using the Surf function like we did for Range
 %Doppler Response output.
-figure('Name','CA-CFAR Filtered')
-surf(doppler_axis,range_axis,CFAR);
+figure('Name','CA-CFAR Filtered RDM')
+surf(doppler_axis,range_axis,RDM);
 colorbar;
 
 

@@ -7,6 +7,11 @@ A MATLAB code generate a FMCW waveform and use processing techniques like FFT, 2
 # Prerequisites
 MATLAB
 
+
+R = 110; % set DISTANCE OF THE TARGET is 110
+v = 30; % set Velocity OF THE TARGET is 30 
+
+
 # 2D CFAR
 The 2d CA-CFAR implementation involves the training cells occupying the cells surround the cell under test with a guard grid in between to prevent the impact of a target signal on the noise estimate.
 
