@@ -27,7 +27,7 @@ v = 30; % initial Velocity OF THE TARGET
 %Design the FMCW waveform by giving the specs of each of its parameters.
 % Calculate the Bandwidth (B), Chirp Time (Tchirp) and Slope (slope) of the FMCW
 % chirp using the requirements above.
-c = 3*10^8;
+c = 3e8;
 % Max Range = 200m
 % Range Resolution = 1 m
 RangeResolution = 1;
@@ -157,30 +157,38 @@ surf(doppler_axis,range_axis,CFAR);
 %Slide Window through the complete Range Doppler Map
 
 % *%TODO* :
-%Select the number of Training Cells in both the dimensions.
-Tr = 8;   
-Td = 4;
-% *%TODO* :
-%Select the number of Guard Cells in both dimensions around the Cell under 
-%test (CUT) for accurate estimation
-Gr = 8;
-Gd = 4;
-
-% *%TODO* :
-% offset the threshold by SNR value in dB
-offset = 0.7;
-% *%TODO* :
-%Slide the cell under test across the complete matrix. Make sure the CUT has margin for Training and Guard cells from the edges.
+% %Select the number of Training Cells in both the dimensions.
+Tr = 10;   
+Td = 7;
+% % *%TODO* :
+% %Select the number of Guard Cells in both dimensions around the Cell under 
+% %test (CUT) for accurate estimation
+Gr = 5;
+Gd = 3;
+% 
+% % *%TODO* :
+% % offset the threshold by SNR value in dB
+ offset = 10.88;
+% % *%TODO* :
+% %Slide the cell under test across the complete matrix. Make sure the CUT has margin for Training and Guard cells from the edges.
 
 
 
 % *%:
 % or another parameter list
+
+
 % Tr = 80;
 % Td = 20; 
 % Gr = 7;
 % Gd = 7;
-% offset =0.6;
+% offset =12;
+
+% Tr = 9;
+% Td = 5; 
+% Gr = 5;
+% Gd = 3;
+% offset =12;
 
 %Create a vector to store noise_level for each iteration on training cells
 noise_level = zeros(1,1);
@@ -196,9 +204,6 @@ noise_level = zeros(1,1);
 %signal under CUT with this threshold. If the CUT level > threshold assign
 %it a value of 1, else equate it to 0.
 
-
-
-CFAR = CFAR/max(max(CFAR));
 
 for i = Tr+Gr+1:(Nr/2)-(Gr+Tr)
     for j = Td+Gd+1:Nd-(Gd+Td)
