@@ -19,11 +19,19 @@ The 2d CA-CFAR implementation involves the training cells occupying the cells su
 1.Determine the number of Training cells for each dimensions. Similarly, pick the number of guard cells.
 This number can be picked for try and error. In this project was used, in which gave us a good result.
 
-    * Tr = 8
-    * Td = 4 
-    * Gr = 8
-    * Gd = 4
-    * offset = 0.7;
+    * Tr = 10
+    * Td = 7 
+    * Gr = 5
+    * Gd = 3
+    * offset = 10.88;
+
+or 
+
+    * Tr = 9
+    * Td = 5
+    * Gr = 5
+    * Gd = 3
+    * offset =12;
 
 or 
 
@@ -31,13 +39,13 @@ or
     * Td = 20 
     * Gr = 7
     * Gd = 7
-    * offset =0.6;
+    * offset =12;
 
 2.Select the grid that includes the training, guard and Cell Under Test (CUT).
 
 3.Measuring the average noise across all the training cells, this gives the threshold.
 
-4.Add a offset to the threshold to keep the false alarm to the minimum. In this project we used 6dB.
+4.Add a offset to the threshold to keep the false alarm to the minimum. In this project we used 1.88dB.
 
 5.Test the CUT against the threshold, assign a value of 1 if the value is greater, else equate it to zero.
 
